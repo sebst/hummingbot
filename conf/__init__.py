@@ -1,9 +1,10 @@
 #!/usr/bin/env python
 
+import logging as _logging
 import os
+
 from hummingbot.client.config.global_config_map import connector_keys
 
-import logging as _logging
 _logger = _logging.getLogger(__name__)
 
 master_host = "***REMOVED***"
@@ -81,6 +82,10 @@ kucoin_secret_key = os.getenv("KUCOIN_SECRET_KEY")
 kucoin_passphrase = os.getenv("KUCOIN_PASSPHRASE")
 
 test_web3_provider_list = [os.getenv("WEB3_PROVIDER")]
+
+# Latoken Tests
+latoken_api_key = os.getenv("LATOKEN_API_KEY")
+latoken_secret_key = os.getenv("LATOKEN_SECRET_KEY")
 
 # Liquid Tests
 liquid_api_key = os.getenv("LIQUID_API_KEY")
