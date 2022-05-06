@@ -578,7 +578,7 @@ class LatokenExchange(ExchangeBase):
         :param order_id: the client id of the order to cancel
         """
         tracked_order = self._order_tracker.fetch_tracked_order(order_id)
-        exchange_order_id = tracked_order.exchange_order_id
+        exchange_order_id = tracked_order.get_exchange_order_id()
 
         if tracked_order is not None:
             try:

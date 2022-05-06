@@ -47,7 +47,7 @@ class LatokenUserStreamTrackerUnitTest(unittest.TestCase):
         """
         This functions runs in background continuously processing the events received from the exchange by the user
         stream data source. It keeps reading events from the queue until the task is interrupted.
-        The events received are balance updates, order updates and trade events..
+        The events received are balance updates, order updates and trade events.
         """
         user_account_data = []
         async for event_message in self._iter_user_event_queue():
