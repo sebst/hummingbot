@@ -1,6 +1,6 @@
 from hummingbot.core.api_throttler.data_types import RateLimit
 
-HBOT_ORDER_ID_PREFIX = "latoken-hbot"
+HBOT_ORDER_ID_PREFIX = "latoken-hbot-"
 MAX_ORDER_ID_LEN = 36
 SNAPSHOT_LIMIT_SIZE = 100
 DEFAULT_DOMAIN = "com"

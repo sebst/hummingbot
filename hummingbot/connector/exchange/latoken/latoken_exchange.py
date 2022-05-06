@@ -4,7 +4,6 @@ import logging
 import time
 import uuid
 from decimal import Decimal
-from math import isnan
 from typing import Any, AsyncIterable, Dict, List, Optional
 
 import ujson
@@ -444,17 +443,10 @@ class LatokenExchange(ExchangeBase):
                 for cr in cancellation_results:
                     if isinstance(cr, Exception):
                         continue
-                    if isinstance(cr, dict) and "id" in cr:
-                        exchange_order_id = cr.get("id")
-                        tracked_order = self._order_tracker.fetch_order(exchange_order_id=exchange_order_id)
-                        if tracked_order is None:  # Latoken specific issue
-                            self.logger().error(
-                                "could not find exchange_order_id required for cancelation!"
-                                f" exchange_order_id={exchange_order_id} cr={cr}")
-                        else:
-                            client_order_id = tracked_order.client_order_id
-                            order_id_set.remove(client_order_id)
-                            successful_cancellations.append(CancellationResult(client_order_id, True))
+                    if cr is not None:
+                        client_order_id = cr
+                        order_id_set.remove(client_order_id)
+                        successful_cancellations.append(CancellationResult(client_order_id, True))
         except Exception:
             self.logger().network(
                 "Unexpected error cancelling orders.",
@@ -578,9 +570,10 @@ class LatokenExchange(ExchangeBase):
         :param order_id: the client id of the order to cancel
         """
         tracked_order = self._order_tracker.fetch_tracked_order(order_id)
+
         if tracked_order is not None:
             try:
-                exchange_order_id = tracked_order.get_exchange_order_id()
+                exchange_order_id = await tracked_order.get_exchange_order_id()
                 api_json = {"id": exchange_order_id}
                 cancel_result = await self._api_request(
                     method=RESTMethod.POST,
@@ -590,13 +583,6 @@ class LatokenExchange(ExchangeBase):
 
                 order_cancel_status = cancel_result.get("status")
                 if order_cancel_status == "SUCCESS":
-                    # this is necessary for live trading
-                    # note that this is a Latoken specific workaround self.current_timestamp should have a value
-                    while isnan(self.current_timestamp):
-                        self.logger().error(
-                            "Cancelation of order sent outside a started live trading strategy "
-                            f"client_order_id={order_id} exchange_order_id={exchange_order_id}")
-                        await asyncio.sleep(1.0)
 
                     order_update: OrderUpdate = OrderUpdate(
                         client_order_id=order_id,
@@ -606,15 +592,22 @@ class LatokenExchange(ExchangeBase):
                     )
 
                     self._order_tracker.process_order_update(order_update)
-                    return cancel_result
+                    return order_id
                 else:  # order_cancel_status == "FAILURE":
                     raise ValueError(f"Cancel order failed, no SUCCESS message {order_cancel_status}")
 
             except asyncio.CancelledError:
                 raise
+            except asyncio.TimeoutError:
+                self.logger().warning(f"Failed to cancel the order {order_id} because it does not have an exchange"
+                                      f" order id yet")
+                await self._order_tracker.process_order_not_found(order_id)
             except Exception:
-                self.logger().exception(f"There was an error when requesting cancelation of order {order_id}")
-                raise
+                self.logger().network(
+                    f"Unexpected error canceling order {order_id}.",
+                    exc_info=True,
+                    app_warning_msg="Failed to cancel order. Check API key and network connection."
+                )
 
     async def _status_polling_loop(self):
         """
