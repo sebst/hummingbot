@@ -580,7 +580,7 @@ class LatokenExchange(ExchangeBase):
         tracked_order = self._order_tracker.fetch_tracked_order(order_id)
         if tracked_order is not None:
             try:
-                exchange_order_id = tracked_order.get_exchange_order_id()
+                exchange_order_id = await tracked_order.get_exchange_order_id()
                 api_json = {"id": exchange_order_id}
                 cancel_result = await self._api_request(
                     method=RESTMethod.POST,
