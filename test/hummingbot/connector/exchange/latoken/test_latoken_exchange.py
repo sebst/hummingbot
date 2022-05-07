@@ -425,8 +425,8 @@ class LatokenExchangeTests(TestCase):
 
         self.assertTrue(
             self._is_logged(
-                "ERROR",
-                f"There was an error when requesting cancelation of order {order.client_order_id}"
+                "NETWORK",
+                f"Unexpected error canceling order {order.client_order_id}.",
             )
         )
 

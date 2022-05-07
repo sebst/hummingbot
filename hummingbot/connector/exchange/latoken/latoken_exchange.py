@@ -604,7 +604,7 @@ class LatokenExchange(ExchangeBase):
                 await self._order_tracker.process_order_not_found(order_id)
             except Exception:
                 self.logger().network(
-                    "Unexpected error canceling orders.",
+                    f"Unexpected error canceling order {order_id}.",
                     exc_info=True,
                     app_warning_msg="Failed to cancel order. Check API key and network connection."
                 )
