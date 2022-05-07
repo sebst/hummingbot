@@ -139,9 +139,11 @@ def get_order_status_rest(status: str, filled: Decimal, quantity: Decimal):
 
 
 def create_full_mapping(ticker_list, currency_list, pair_list):
-    print("TL "*22)
-    print("TL>", ticker_list)
-    raise ticker_list
+    # print("TL "*22)
+    # print("TL>", ticker_list)
+    if isinstance(ticker_list, Exception):
+        raise ticker_list
+    breakpoint()
     ticker_dict = {f"{ticker['baseCurrency']}/{ticker['quoteCurrency']}": ticker for ticker in ticker_list}
     # pair_dict = {f"{pair['baseCurrency']}/{pair['quoteCurrency']}": pair for pair in pair_list}
     currency_dict = {currency["id"]: currency for currency in currency_list}
@@ -237,7 +239,7 @@ async def api_request(path: str,
     )
 
     async with throttler.execute_task(limit_id=limit_id if limit_id else path):
-        print("//////////R>>>>>>>", request)
+        # print("//////////R>>>>>>>", request)
         response = await rest_assistant.call(request=request, timeout=timeout)
 
         if response.status != 200 and not return_err:
@@ -261,4 +263,4 @@ async def get_current_server_time(
         limit_id=CONSTANTS.GLOBAL_RATE_LIMIT
     )
     print('serverTime>>>>>>>>>>>>>>>>', response)
-    return response["data"]["server_datetime"]
+    return response["data"]["server_timestamp"]

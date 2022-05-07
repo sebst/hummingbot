@@ -7,8 +7,8 @@ DEFAULT_DOMAIN = "com"
 # DOMAIN_TO_ENDPOINT = {"com": "thishostdoesnotexist.api3.stex"}
 
 # Base URL
-REST_URL = "https://api3.stex.com/"
-WSS_URL = "wss://api3.stex.com/"
+REST_URL = "https://api3.stex.com"
+WSS_URL = "wss://api3.stex.com"
 
 # API versions
 # PUBLIC_API_VERSION = "/v2"
@@ -16,8 +16,8 @@ WSS_URL = "wss://api3.stex.com/"
 
 # Public API endpoints or LatokenClient function
 # TICKER_PRICE_CHANGE_PATH_URL = "/ticker/24hr"
-TICKER_PATH_URL = "/ticker"
-CURRENCY_PATH_URL = "/currency"
+TICKER_PATH_URL = "/public/ticker"
+CURRENCY_PATH_URL = "/public/currencies"
 PAIR_PATH_URL = "/pair"
 PING_PATH_URL = "/time"
 BOOK_PATH_URL = "/book"
