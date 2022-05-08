@@ -26,24 +26,26 @@ class StexcomAPIOrderBookDataSourceUnitTest(unittest.TestCase):
         result: List[str] = self.ev_loop.run_until_complete(
             self.data_source.get_trading_pairs())
 
+        print("RES>", result)
+
         self.assertIsInstance(result, list)
         self.assertGreater(len(result), 0)
         index = result.index("BTC-USDT")
         self.assertIsInstance(result[index], str)
         self.assertEqual(result[index], "BTC-USDT")
 
-    # def test_size_snapshot(self):
-    #     async def run_session_for_fetch_snaphot():
-    #         # async with aiohttp.ClientSession() as client:
-    #         result = await self.data_source.get_snapshot("BTC-USDT")  # verify the default set to 100
-    #         assert len(result["bid"]) == CONSTANTS.SNAPSHOT_LIMIT_SIZE
-    #         assert len(result["ask"]) == CONSTANTS.SNAPSHOT_LIMIT_SIZE
+    def test_size_snapshot(self):
+        async def run_session_for_fetch_snaphot():
+            # async with aiohttp.ClientSession() as client:
+            result = await self.data_source.get_snapshot("BTC-USDT")  # verify the default set to 100
+            assert len(result["bid"]) == CONSTANTS.SNAPSHOT_LIMIT_SIZE
+            assert len(result["ask"]) == CONSTANTS.SNAPSHOT_LIMIT_SIZE
 
-    #         # 25 is default fetch value, that is very small for use in production
-    #         assert len(result["bid"]) > 25
-    #         assert len(result["ask"]) > 25
+            # 25 is default fetch value, that is very small for use in production
+            assert len(result["bid"]) > 25
+            assert len(result["ask"]) > 25
 
-    #     self.ev_loop.run_until_complete(run_session_for_fetch_snaphot())
+        self.ev_loop.run_until_complete(run_session_for_fetch_snaphot())
 
 
 def main():

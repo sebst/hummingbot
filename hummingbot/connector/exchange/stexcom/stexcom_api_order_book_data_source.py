@@ -408,7 +408,8 @@ class StexcomAPIOrderBookDataSource(OrderBookTrackerDataSource):
         """
         params = {}
         if limit != 0:
-            params["limit"] = str(limit)
+            params["limit_bids"] = str(limit)
+            params["limit_asks"] = str(limit)
 
         symbol = await self.exchange_symbol_associated_to_pair(
             trading_pair=trading_pair,
@@ -416,6 +417,9 @@ class StexcomAPIOrderBookDataSource(OrderBookTrackerDataSource):
             api_factory=self._api_factory,
             throttler=self._throttler,
             time_synchronizer=self._time_synchronizer)
+
+        print("SYM>", symbol, trading_pair, 406)
+        symbol = "406" # BTC_USDT TODO: sebst
 
         data = await web_utils.api_request(
             path=f"{CONSTANTS.BOOK_PATH_URL}/{symbol}",
@@ -428,6 +432,10 @@ class StexcomAPIOrderBookDataSource(OrderBookTrackerDataSource):
             return_err=False,
             limit_id=CONSTANTS.GLOBAL_RATE_LIMIT
         )
+
+        data = data["data"]
+
+        print("DAT>", data)
 
         return data
 

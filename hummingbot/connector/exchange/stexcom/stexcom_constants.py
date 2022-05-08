@@ -20,7 +20,7 @@ TICKER_PATH_URL = "/public/ticker"
 CURRENCY_PATH_URL = "/public/currencies"
 PAIR_PATH_URL = "/pair"
 PING_PATH_URL = "/time"
-BOOK_PATH_URL = "/book"
+BOOK_PATH_URL = "/public/orderbook" # sebst https://api3.stex.com/public/orderbook/{currencyPairId}
 SNAPSHOT_PATH_URL = "/depth"
 SERVER_TIME_PATH_URL = "/public/ping" # sebst
 
