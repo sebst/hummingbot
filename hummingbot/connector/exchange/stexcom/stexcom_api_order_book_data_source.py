@@ -230,7 +230,7 @@ class StexcomAPIOrderBookDataSource(OrderBookTrackerDataSource):
             api_factory=api_factory,
             time_synchronizer=time_synchronizer,
         )
-        print("TP>", list(mapping.values()))
+        # print("TP>", list(mapping.values()))
         return list(mapping.values())
 
     async def get_new_order_book(self, trading_pair: str) -> OrderBook:
@@ -418,8 +418,7 @@ class StexcomAPIOrderBookDataSource(OrderBookTrackerDataSource):
             throttler=self._throttler,
             time_synchronizer=self._time_synchronizer)
 
-        print("SYM>", symbol, trading_pair, 406)
-        symbol = "406" # BTC_USDT TODO: sebst
+        # print("SYM>", symbol, trading_pair, 406)
 
         data = await web_utils.api_request(
             path=f"{CONSTANTS.BOOK_PATH_URL}/{symbol}",
@@ -435,7 +434,7 @@ class StexcomAPIOrderBookDataSource(OrderBookTrackerDataSource):
 
         data = data["data"]
 
-        print("DAT>", data)
+        # print("DAT>", data)
 
         return data
 
@@ -574,7 +573,8 @@ class StexcomAPIOrderBookDataSource(OrderBookTrackerDataSource):
             full_mapping = web_utils.create_full_mapping(ticker_list)
             # print("+++"*88)
             for pair, data in full_mapping.items():
-                mapping[pair] = pair.replace('/', '-')
+                # print("D>", data, pair)
+                mapping[str(data["id"])] = pair.replace("/", "-")
             
             # print("MAP>", mapping)
 

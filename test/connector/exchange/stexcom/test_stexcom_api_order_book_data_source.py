@@ -26,7 +26,7 @@ class StexcomAPIOrderBookDataSourceUnitTest(unittest.TestCase):
         result: List[str] = self.ev_loop.run_until_complete(
             self.data_source.get_trading_pairs())
 
-        print("RES>", result)
+        # print("RES>", result)
 
         self.assertIsInstance(result, list)
         self.assertGreater(len(result), 0)
