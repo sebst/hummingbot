@@ -223,12 +223,14 @@ class StexcomAPIOrderBookDataSource(OrderBookTrackerDataSource):
 
         :return: list of trading pairs in client notation
         """
+        print("fetch_trading_pairs")
         mapping = await StexcomAPIOrderBookDataSource.trading_pair_symbol_map(
             domain=domain,
             throttler=throttler,
             api_factory=api_factory,
             time_synchronizer=time_synchronizer,
         )
+        print("TP>", list(mapping.values()))
         return list(mapping.values())
 
     async def get_new_order_book(self, trading_pair: str) -> OrderBook:
@@ -520,7 +522,8 @@ class StexcomAPIOrderBookDataSource(OrderBookTrackerDataSource):
         #     return_exceptions=True)
         mapping = bidict()
         try:
-            ticker_list, currency_list, pair_list = await safe_gather(
+            # ticker_list, currency_list, pair_list = await safe_gather(
+            ticker_list = await safe_gather(
                 web_utils.api_request(
                     path=CONSTANTS.TICKER_PATH_URL,
                     api_factory=api_factory,
@@ -531,35 +534,43 @@ class StexcomAPIOrderBookDataSource(OrderBookTrackerDataSource):
                     return_err=True,
                     limit_id=CONSTANTS.GLOBAL_RATE_LIMIT
                 ),
-                web_utils.api_request(
-                    path=CONSTANTS.CURRENCY_PATH_URL,
-                    api_factory=api_factory,
-                    throttler=throttler,
-                    time_synchronizer=time_synchronizer,
-                    domain=domain,
-                    method=RESTMethod.GET,
-                    return_err=True,
-                    limit_id=CONSTANTS.GLOBAL_RATE_LIMIT
-                ),
-                web_utils.api_request(
-                    path=CONSTANTS.PAIR_PATH_URL,
-                    api_factory=api_factory,
-                    throttler=throttler,
-                    time_synchronizer=time_synchronizer,
-                    domain=domain,
-                    method=RESTMethod.GET,
-                    return_err=True,
-                    limit_id=CONSTANTS.GLOBAL_RATE_LIMIT
-                ),
+                # web_utils.api_request(
+                #     path=CONSTANTS.CURRENCY_PATH_URL,
+                #     api_factory=api_factory,
+                #     throttler=throttler,
+                #     time_synchronizer=time_synchronizer,
+                #     domain=domain,
+                #     method=RESTMethod.GET,
+                #     return_err=True,
+                #     limit_id=CONSTANTS.GLOBAL_RATE_LIMIT
+                # ),
+                # web_utils.api_request(
+                #     path=CONSTANTS.PAIR_PATH_URL,
+                #     api_factory=api_factory,
+                #     throttler=throttler,
+                #     time_synchronizer=time_synchronizer,
+                #     domain=domain,
+                #     method=RESTMethod.GET,
+                #     return_err=True,
+                #     limit_id=CONSTANTS.GLOBAL_RATE_LIMIT
+                # ),
                 return_exceptions=True)
 
-            full_mapping = web_utils.create_full_mapping(ticker_list, currency_list, pair_list)
+            # full_mapping = web_utils.create_full_mapping(ticker_list, currency_list, pair_list)
 
-            for pair in filter(utils.is_exchange_information_valid, full_mapping):
-                mapping[f"{pair['id']['baseCurrency']}/{pair['id']['quoteCurrency']}"] = pair["id"]["symbol"].replace('/', '-')
+            # for pair in filter(utils.is_exchange_information_valid, full_mapping):
+            #     mapping[f"{pair['id']['baseCurrency']}/{pair['id']['quoteCurrency']}"] = pair["id"]["symbol"].replace('/', '-')
+
+            # print("---"*88)
+
+            full_mapping = web_utils.create_full_mapping(ticker_list)
+            # print("+++"*88)
+            for pair, data in full_mapping.items():
+                mapping[pair] = pair.replace('/', '-')
+            
+            # print("MAP>", mapping)
 
         except Exception as ex:
             cls.logger().error(f"There was an error requesting exchange info ({ex})")
-            raise
 
         cls._trading_pair_symbol_map[domain] = mapping

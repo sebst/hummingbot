@@ -138,15 +138,32 @@ def get_order_status_rest(status: str, filled: Decimal, quantity: Decimal):
 #     return data
 
 
-def create_full_mapping(ticker_list, currency_list, pair_list):
+# def create_full_mapping(ticker_list, currency_list, pair_list):
+def create_full_mapping(ticker_list):
+    
     # print("TL "*22)
     # print("TL>", ticker_list)
     if isinstance(ticker_list, Exception):
         raise ticker_list
-    breakpoint()
-    ticker_dict = {f"{ticker['baseCurrency']}/{ticker['quoteCurrency']}": ticker for ticker in ticker_list}
-    # pair_dict = {f"{pair['baseCurrency']}/{pair['quoteCurrency']}": pair for pair in pair_list}
-    currency_dict = {currency["id"]: currency for currency in currency_list}
+    # print("create_full_mapping"*88)
+    # print(ticker_list)
+    # breakpoint()
+    # print("TL>", ticker_list)
+    ticker_list = ticker_list.pop()
+    data = ticker_list["data"]
+    # print("D>", data)
+    ticker_dict = {f"{market['currency_code']}/{market['market_code']}": market for market in data}
+    # print("TD>", ticker_dict)
+    return ticker_dict
+
+    # print("TD>", ticker_dict)
+
+    # ticker_dict = {f"{ticker['baseCurrency']}/{ticker['quoteCurrency']}": ticker for ticker in ticker_list}
+    # # pair_dict = {f"{pair['baseCurrency']}/{pair['quoteCurrency']}": pair for pair in pair_list}
+    # currency_dict = {currency["id"]: currency for currency in currency_list}
+
+    # currency_dict = 
+    # return ticker_dict
 
     for pt in pair_list:
         key = f"{pt['baseCurrency']}/{pt['quoteCurrency']}"
